@@ -44,6 +44,10 @@ fun ScoreScreen(
             text = "Your score: $score / $total",
             style = MaterialTheme.typography.headlineMedium
         )
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = { println("DEBUG BUTTON clicked") }) {
+            Text("DEBUG BUTTON")
+        }
         Spacer(modifier = Modifier.height(24.dp))
         Button(onClick = onRestart) {
             Text("Restart")
