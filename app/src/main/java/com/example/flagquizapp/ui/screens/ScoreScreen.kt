@@ -25,9 +25,6 @@ fun ScoreScreen(
     onRestart: () -> Unit,
     onGoBack: () -> Unit
 ) {
-    // fallback to activity back if onGoBack doesn't finish
-    val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -35,28 +32,29 @@ fun ScoreScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = "🎉 Quiz finished!",
-            style = MaterialTheme.typography.headlineSmall
-        )
+        val message = when {
+            score == total      -> "🏆 Perfect score!"
+            score >= total / 2  -> "🎉 Great job!"
+            else                -> "👍 Keep practicing!"
+        }
+
+        Text(text = message, style = MaterialTheme.typography.headlineSmall)
         Spacer(modifier = Modifier.height(16.dp))
+
         Text(
             text = "Your score: $score / $total",
             style = MaterialTheme.typography.headlineMedium
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { println("DEBUG BUTTON clicked") }) {
-            Text("DEBUG BUTTON")
-        }
+
         Spacer(modifier = Modifier.height(24.dp))
+
         Button(onClick = onRestart) {
-            Text("Restart")
+            Text("Play Again")
         }
+
         Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = {
-            onGoBack()
-            backDispatcher?.onBackPressed()
-        }) {
+
+        Button(onClick = onGoBack) {
             Text("Go Back")
         }
     }
