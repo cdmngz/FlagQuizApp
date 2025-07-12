@@ -38,7 +38,6 @@ fun FlagQuizContent(
                         country = country,
                         correct = correct,
                         answered = answered,
-                        clickedCountry = clickedCountry,
                         onClick = { onOptionClick(country) }
                     )
                 }
