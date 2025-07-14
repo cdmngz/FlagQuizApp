@@ -83,14 +83,12 @@ fun FlagQuizScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 48.dp) // give space for the icon
+                .padding(top = 48.dp)
         ) {
             FlagQuizContent(
                 correct = current.correct,
                 options = current.options,
                 answered = answered,
-                isCorrect = isCorrect,
-                clickedCountry = clickedCountry,
                 onOptionClick = { selected ->
                     clickedCountry = selected
                     isCorrect = (selected == current.correct)

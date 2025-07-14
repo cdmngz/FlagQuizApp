@@ -14,8 +14,6 @@ fun FlagQuizContent(
     correct: Country,
     options: List<Country>,
     answered: Boolean,
-    isCorrect: Boolean,
-    clickedCountry: Country?,
     onOptionClick: (Country) -> Unit
 ) {
     Column(
@@ -42,15 +40,6 @@ fun FlagQuizContent(
                     )
                 }
             }
-        }
-
-        Spacer(Modifier.height(16.dp))
-
-        if (answered) {
-            Text(
-                text = if (isCorrect) "🎉 Correct!" else "❌ Wrong",
-                style = MaterialTheme.typography.bodyLarge
-            )
         }
     }
 }

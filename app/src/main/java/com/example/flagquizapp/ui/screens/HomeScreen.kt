@@ -9,8 +9,9 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun HomeScreen(
-    onPlayWorldQuiz: () -> Unit
-) {
+    onPlayWorldQuiz: () -> Unit,
+    onPlayCapitalQuiz: () -> Unit,
+    onPlayFootballQuiz: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -22,7 +23,18 @@ fun HomeScreen(
         Spacer(Modifier.height(24.dp))
 
         Button(onClick = onPlayWorldQuiz) {
-            Text("Play World Flags Quiz")
+            Text("🌎 World Flags")
         }
+        Spacer(Modifier.height(16.dp))
+
+        Button(onClick = onPlayCapitalQuiz) {
+            Text("🏰 Capital Flags")
+        }
+        Spacer(Modifier.height(16.dp))
+
+        Button(onClick = onPlayFootballQuiz) {
+            Text("⚽️ Football Flags")
+        }
+        Spacer(Modifier.height(16.dp))
     }
 }
