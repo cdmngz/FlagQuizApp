@@ -1,26 +1,38 @@
 package com.example.flagquizapp.navigation
 
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument                    // navArgument is now here, not in compose :contentReference[oaicite:0]{index=0}
+import androidx.navigation.navArgument
 import com.example.flagquizapp.data.getWorldCountries
 import com.example.flagquizapp.model.Continents
 import com.example.flagquizapp.ui.screens.ContinentSelectionScreen
+import com.example.flagquizapp.ui.screens.DailyGameScreen
 import com.example.flagquizapp.ui.screens.FlagQuizScreen
 import com.example.flagquizapp.ui.screens.HomeScreen
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun AppNavHost(navController: NavHostController) {
     NavHost(
         navController  = navController,
-        startDestination = Screen.Home.route
+        startDestination = Screen.Home.route,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
         // 1) Home → Continent picker
         composable(Screen.Home.route) {
             HomeScreen(
+                onPlayDailyGame = {
+                    navController.navigate(Screen.DailyGame.route)
+                },
                 onPlayWorldQuiz = {
                     navController.navigate(Screen.ContinentSelection.route)
                 },
@@ -45,7 +57,17 @@ fun AppNavHost(navController: NavHostController) {
             )
         }
 
-        // 3) Quiz screen, now with a “continent” argument
+        composable(Screen.DailyGame.route) {
+            val country = remember { getWorldCountries().random() }
+
+            DailyGameScreen(
+                country = country,
+                onFinish = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
         composable(
             route = Screen.FlagQuiz.route,
             arguments = listOf(
@@ -53,7 +75,7 @@ fun AppNavHost(navController: NavHostController) {
                     type = NavType.StringType
                 }
             )
-        ) { backStackEntry ->                            // explicit parameter lets Kotlin infer T :contentReference[oaicite:1]{index=1}
+        ) { backStackEntry ->
             val continentName = backStackEntry
                 .arguments
                 ?.getString("continent")

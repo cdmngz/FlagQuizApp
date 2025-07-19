@@ -16,9 +16,11 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun HomeScreen(
+    onPlayDailyGame: () -> Unit,
     onPlayWorldQuiz: () -> Unit,
     onPlayCapitalQuiz: () -> Unit,
     onPlayFootballQuiz: () -> Unit) {
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -26,21 +28,17 @@ fun HomeScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Welcome", style = MaterialTheme.typography.headlineMedium)
+        Text("Welcome 👋🏻", style = MaterialTheme.typography.headlineMedium)
         Spacer(Modifier.height(24.dp))
 
         Button(
-            onClick = {},
+            onClick = onPlayDailyGame,
             shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF60AFCB)),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp)
         ) {
-            Icon(Icons.Default.AccountCircle, contentDescription = null, modifier = Modifier.size(18.dp))
-            Spacer(Modifier.width(8.dp))
-            Text("Hello", fontWeight = FontWeight.Medium, fontSize = 16.sp)
-            Spacer(Modifier.width(4.dp))
-            Icon(Icons.Default.ArrowDropDown, contentDescription = null, modifier = Modifier.size(18.dp))
+            Text("🗓️ Daily Game")
         }
+
 
         Spacer(Modifier.height(16.dp))
 

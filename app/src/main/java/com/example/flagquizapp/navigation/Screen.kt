@@ -1,11 +1,10 @@
 package com.example.flagquizapp.navigation
 
 sealed class Screen(val route: String) {
-    object Home : Screen("home")
-    object ContinentSelection : Screen("continent_selection")
-    // note the `{continent}` arg in the route:
-    object FlagQuiz : Screen("flag_quiz/{continent}") {
-        // helper to build the actual path
+    data object Home : Screen("home")
+    data object ContinentSelection : Screen("continent_selection")
+    data object DailyGame : Screen("daily_game")
+    data object FlagQuiz : Screen("flag_quiz/{continent}") {
         fun createRoute(continent: String) = "flag_quiz/$continent"
     }
 }

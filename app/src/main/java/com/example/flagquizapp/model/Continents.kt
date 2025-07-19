@@ -4,8 +4,6 @@ enum class Continents(val displayName: String) {
     AFRICA("Africa"),
     ASIA("Asia"),
     EUROPE("Europe"),
-    NORTH_AMERICA("North America"),
-    SOUTH_AMERICA("South America"),
+    AMERICA("North America"),
     OCEANIA("Oceania"),
-    ANTARCTICA("Antarctica")
 }
