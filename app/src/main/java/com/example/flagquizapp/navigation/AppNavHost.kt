@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -15,8 +17,6 @@ import com.example.flagquizapp.ui.screens.ContinentSelectionScreen
 import com.example.flagquizapp.ui.screens.DailyGameScreen
 import com.example.flagquizapp.ui.screens.FlagQuizScreen
 import com.example.flagquizapp.ui.screens.HomeScreen
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 
 @Composable
 fun AppNavHost(navController: NavHostController) {
@@ -45,18 +45,6 @@ fun AppNavHost(navController: NavHostController) {
             )
         }
 
-        // 2) Choose your continent
-        composable(Screen.ContinentSelection.route) {
-            ContinentSelectionScreen(
-                onSelectContinent = { continent ->
-                    navController.navigate(
-                        Screen.FlagQuiz.createRoute(continent.name)
-                    )
-                },
-                onGoBack = { navController.popBackStack() }
-            )
-        }
-
         composable(Screen.DailyGame.route) {
             val country = remember { getWorldCountries().random() }
 
@@ -65,6 +53,17 @@ fun AppNavHost(navController: NavHostController) {
                 onFinish = {
                     navController.popBackStack()
                 }
+            )
+        }
+
+        composable(Screen.ContinentSelection.route) {
+            ContinentSelectionScreen(
+                onSelectContinent = { continent ->
+                    navController.navigate(
+                        Screen.FlagQuiz.createRoute(continent.name)
+                    )
+                },
+                onGoBack = { navController.popBackStack() }
             )
         }
 
