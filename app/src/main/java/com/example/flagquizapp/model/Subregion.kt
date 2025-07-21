@@ -11,9 +11,9 @@ enum class Subregion(val displayName: String, val continent: Continent) {
 
     // America
     NORTH_AMERICA("North America", Continent.AMERICA),
-    SOUTH_AMERICA("South America", Continent.AMERICA),
     CENTRAL_AMERICA("Central America", Continent.AMERICA),
     CARIBBEAN("Caribbean", Continent.AMERICA),
+    SOUTH_AMERICA("South America", Continent.AMERICA),
 
     // Asia
     CENTRAL_ASIA("Central Asia", Continent.ASIA),

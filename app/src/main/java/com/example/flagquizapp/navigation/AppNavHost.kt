@@ -82,21 +82,16 @@ fun AppNavHost(navController: NavHostController) {
             route = Screen.SubRegionSelection.route,
             arguments = listOf(navArgument("continent") { type = NavType.StringType })
         ) { backStackEntry ->
-            // get the raw string from navArgs…
-            val continentName = backStackEntry
-                .arguments
-                ?.getString("continent")
-                ?: return@composable
-
-            // convert it once to the enum
+            val continentName = backStackEntry.arguments?.getString("continent") ?: return@composable
             val continent = Continent.valueOf(continentName)
 
             SubRegionScreen(
-                continent = continent,              // <-- use the new name
+                continent = continent,
                 onGoBack = { navController.popBackStack() },
-                onSelectSubregion = { subregion ->
-                    // subregion is a Subregion enum now
-                    navController.navigate(Screen.FlagQuiz.createRoute(subregion.name))
+                onSelectSubregion = { subregion, buttonIndex ->
+                    // Navigate based on which button was clicked
+                    // Example: route may vary depending on the index
+                    navController.navigate(Screen.FlagQuiz.createRoute(subregion.name, buttonIndex))
                 }
             )
         }
