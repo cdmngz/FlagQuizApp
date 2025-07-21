@@ -7,4 +7,5 @@ sealed class Screen(val route: String) {
     data object FlagQuiz : Screen("flag_quiz/{continent}") {
         fun createRoute(continent: String) = "flag_quiz/$continent"
     }
+    data object ThankYou : Screen("thank_you")
 }

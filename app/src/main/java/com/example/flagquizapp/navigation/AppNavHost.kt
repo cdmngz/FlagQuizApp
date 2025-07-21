@@ -17,6 +17,7 @@ import com.example.flagquizapp.ui.screens.ContinentSelectionScreen
 import com.example.flagquizapp.ui.screens.DailyGameScreen
 import com.example.flagquizapp.ui.screens.FlagQuizScreen
 import com.example.flagquizapp.ui.screens.HomeScreen
+import com.example.flagquizapp.ui.screens.ThankYouScreen
 
 @Composable
 fun AppNavHost(navController: NavHostController) {
@@ -41,6 +42,9 @@ fun AppNavHost(navController: NavHostController) {
                 },
                 onPlayFootballQuiz = {
                     navController.navigate(Screen.ContinentSelection.route)
+                },
+                onThankYou = {
+                    navController.navigate(Screen.ThankYou.route)
                 }
             )
         }
@@ -55,6 +59,11 @@ fun AppNavHost(navController: NavHostController) {
                 }
             )
         }
+
+        composable(Screen.ThankYou.route) {
+            ThankYouScreen()
+        }
+
 
         composable(Screen.ContinentSelection.route) {
             ContinentSelectionScreen(

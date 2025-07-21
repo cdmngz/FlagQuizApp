@@ -1,5 +1,6 @@
 package com.example.flagquizapp.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,7 +20,8 @@ fun HomeScreen(
     onPlayDailyGame: () -> Unit,
     onPlayWorldQuiz: () -> Unit,
     onPlayCapitalQuiz: () -> Unit,
-    onPlayFootballQuiz: () -> Unit
+    onPlayFootballQuiz: () -> Unit,
+    onThankYou: () -> Unit
 ) {
 
     Column(
@@ -58,6 +60,11 @@ fun HomeScreen(
         ) {
             Text("⚽️ Football Flags (Soon...)")
         }
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.weight(1f))
+
+        Text("Buy me a Coffee ☕️",
+            modifier = Modifier.clickable {
+            onThankYou()
+        })
     }
 }

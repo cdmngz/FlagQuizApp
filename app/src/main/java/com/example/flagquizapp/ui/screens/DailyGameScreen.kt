@@ -133,7 +133,7 @@ fun DailyGameScreen(
             verticalAlignment     = Alignment.CenterVertically
         ) {
             Text(
-                text  = "🗓️ Daily Game",
+                text  = "🦜 Daily Game",
                 style = MaterialTheme.typography.headlineSmall
             )
             IconButton(onClick = { reportBrokenFlag() }) {
