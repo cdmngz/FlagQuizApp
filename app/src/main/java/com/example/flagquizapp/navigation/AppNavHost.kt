@@ -13,13 +13,17 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.flagquizapp.data.getWorldCountries
 import com.example.flagquizapp.model.Continent
+import com.example.flagquizapp.model.QuizType
 import com.example.flagquizapp.model.Subregion
 import com.example.flagquizapp.ui.screens.ContinentSelectionScreen
-import com.example.flagquizapp.ui.screens.DailyGameScreen
-import com.example.flagquizapp.ui.screens.FlagQuizScreen
 import com.example.flagquizapp.ui.screens.HomeScreen
 import com.example.flagquizapp.ui.screens.SubRegionScreen
 import com.example.flagquizapp.ui.screens.ThankYouScreen
+import com.example.flagquizapp.ui.screens.daily.DailyGameScreen
+import com.example.flagquizapp.ui.screens.quiz.FlagQuizScreen
+import com.example.flagquizapp.ui.screens.quiz.MapQuizScreen
+import com.example.flagquizapp.ui.screens.quiz.MixedQuizScreen
+import com.example.flagquizapp.ui.screens.quiz.TimedQuizScreen
 
 @Composable
 fun AppNavHost(navController: NavHostController) {
@@ -98,22 +102,26 @@ fun AppNavHost(navController: NavHostController) {
 
         composable(
             route = Screen.FlagQuiz.route,
-            arguments = listOf(navArgument("subregion") {
-                type = NavType.StringType
-            })
-        ) { backStackEntry ->
-            val subregionName = backStackEntry.arguments
-                ?.getString("subregion")
-                ?: error("Missing subregion")
-
-            // filter by subregion
-            val subregion = Subregion.valueOf(subregionName)
-            val countries = getWorldCountries().filter { it.subregion == subregion }
-
-            FlagQuizScreen(
-                countries     = countries,
-                navController = navController
+            arguments = listOf(
+                navArgument("subregion") { type = NavType.StringType },
+                navArgument("quizType") { type = NavType.IntType }
             )
+        ) { backStackEntry ->
+            val subregionName = backStackEntry.arguments?.getString("subregion") ?: return@composable
+            val quizTypeIndex = backStackEntry.arguments?.getInt("quizType") ?: 0
+
+            val subregion = Subregion.valueOf(subregionName)
+            val countries = remember(subregion) {
+                getWorldCountries().filter { it.subregion == subregion }
+            }
+
+            when (QuizType.from(quizTypeIndex)) {
+                QuizType.FLAGS -> FlagQuizScreen(countries, navController)
+                QuizType.MAPS -> MapQuizScreen(countries, navController)
+                QuizType.MIXED -> MixedQuizScreen(countries, navController)
+                QuizType.TIMED -> TimedQuizScreen(countries, navController)
+            }
         }
+
     }
 }

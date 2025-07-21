@@ -1,24 +1,24 @@
-package com.example.flagquizapp.ui.screens
+package com.example.flagquizapp.ui.screens.daily
 
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.layout.ContentScale
 import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import com.example.flagquizapp.data.getWorldCountries
 import com.example.flagquizapp.model.Country
-import com.example.flagquizapp.ui.components.FlagBoxGrid
-import com.example.flagquizapp.ui.components.SimpleAutoComplete
+import com.example.flagquizapp.ui.components.daily.FlagBoxGrid
+import com.example.flagquizapp.ui.components.daily.SimpleAutoComplete
 
 @Composable
 fun DailyGameScreen(
@@ -149,10 +149,7 @@ fun DailyGameScreen(
             FlagBoxGrid(
                 country       = country,
                 revealedBoxes = revealedBoxes,
-                loader        = svgLoader,
-                modifier      = Modifier
-                    .fillMaxWidth()
-                    .height(180.dp)
+                loader        = svgLoader
             )
         } else {
             Box(

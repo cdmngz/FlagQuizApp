@@ -1,6 +1,12 @@
-package com.example.flagquizapp.ui.components
+package com.example.flagquizapp.ui.components.quiz
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -10,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.example.flagquizapp.model.Country
 
 @Composable
-fun FlagQuizContent(
+fun MapQuizContent(
     correct: Country,
     options: List<Country>,
     answered: Boolean,
@@ -32,7 +38,7 @@ fun FlagQuizContent(
                 modifier = Modifier.padding(vertical = 8.dp)
             ) {
                 rowOptions.forEach { country ->
-                    FlagOption(
+                    MapOption(
                         country = country,
                         correct = correct,
                         answered = answered,
