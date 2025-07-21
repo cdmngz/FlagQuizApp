@@ -12,11 +12,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.flagquizapp.data.getWorldCountries
-import com.example.flagquizapp.model.Continents
+import com.example.flagquizapp.model.Continent
+import com.example.flagquizapp.model.Subregion
 import com.example.flagquizapp.ui.screens.ContinentSelectionScreen
 import com.example.flagquizapp.ui.screens.DailyGameScreen
 import com.example.flagquizapp.ui.screens.FlagQuizScreen
 import com.example.flagquizapp.ui.screens.HomeScreen
+import com.example.flagquizapp.ui.screens.SubRegionScreen
 import com.example.flagquizapp.ui.screens.ThankYouScreen
 
 @Composable
@@ -69,7 +71,7 @@ fun AppNavHost(navController: NavHostController) {
             ContinentSelectionScreen(
                 onSelectContinent = { continent ->
                     navController.navigate(
-                        Screen.FlagQuiz.createRoute(continent.name)
+                        Screen.SubRegionSelection.createRoute(continent.name)
                     )
                 },
                 onGoBack = { navController.popBackStack() }
@@ -77,24 +79,44 @@ fun AppNavHost(navController: NavHostController) {
         }
 
         composable(
-            route = Screen.FlagQuiz.route,
-            arguments = listOf(
-                navArgument("continent") {
-                    type = NavType.StringType
-                }
-            )
+            route = Screen.SubRegionSelection.route,
+            arguments = listOf(navArgument("continent") { type = NavType.StringType })
         ) { backStackEntry ->
+            // get the raw string from navArgs…
             val continentName = backStackEntry
                 .arguments
                 ?.getString("continent")
-                ?: error("Missing continent")
+                ?: return@composable
 
-            val continent = Continents.valueOf(continentName)
-            val countries = getWorldCountries()
-                .filter { it.continent == continent }
+            // convert it once to the enum
+            val continent = Continent.valueOf(continentName)
+
+            SubRegionScreen(
+                continent = continent,              // <-- use the new name
+                onGoBack = { navController.popBackStack() },
+                onSelectSubregion = { subregion ->
+                    // subregion is a Subregion enum now
+                    navController.navigate(Screen.FlagQuiz.createRoute(subregion.name))
+                }
+            )
+        }
+
+        composable(
+            route = Screen.FlagQuiz.route,
+            arguments = listOf(navArgument("subregion") {
+                type = NavType.StringType
+            })
+        ) { backStackEntry ->
+            val subregionName = backStackEntry.arguments
+                ?.getString("subregion")
+                ?: error("Missing subregion")
+
+            // filter by subregion
+            val subregion = Subregion.valueOf(subregionName)
+            val countries = getWorldCountries().filter { it.subregion == subregion }
 
             FlagQuizScreen(
-                countries    = countries,
+                countries     = countries,
                 navController = navController
             )
         }

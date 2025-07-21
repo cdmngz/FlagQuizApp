@@ -1,6 +1,6 @@
 package com.example.flagquizapp.model
 
-enum class Continents(val displayName: String) {
+enum class Continent(val displayName: String) {
     AFRICA("Africa"),
     AMERICA("America"),
     ASIA("Asia"),
