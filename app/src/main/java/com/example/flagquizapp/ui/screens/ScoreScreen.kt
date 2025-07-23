@@ -1,6 +1,5 @@
 package com.example.flagquizapp.ui.screens
 
-import android.content.Context
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,13 +35,11 @@ import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
+import com.example.flagquizapp.data.quizDataStore
 import kotlinx.coroutines.flow.map
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-
-private val Context.dataStore by preferencesDataStore(name = "quiz_prefs")
 
 private object QuizPrefsKeys {
     val BEST_SCORE = intPreferencesKey("best_score")
@@ -66,13 +63,13 @@ fun ScoreScreen(
     val context = LocalContext.current
 
     // --- load stored record ---
-    val bestScoreFlow = context.dataStore.data.map { prefs ->
+    val bestScoreFlow = context.quizDataStore.data.map { prefs ->
         prefs[QuizPrefsKeys.BEST_SCORE] ?: 0
     }
-    val bestTimeFlow = context.dataStore.data.map { prefs ->
+    val bestTimeFlow = context.quizDataStore.data.map { prefs ->
         prefs[QuizPrefsKeys.BEST_TIME_MS] ?: Long.MAX_VALUE
     }
-    val bestTsFlow = context.dataStore.data.map { prefs ->
+    val bestTsFlow = context.quizDataStore.data.map { prefs ->
         prefs[QuizPrefsKeys.BEST_TIMESTAMP] ?: 0L
     }
 
@@ -88,7 +85,7 @@ fun ScoreScreen(
     // --- persist if new record ---
     LaunchedEffect(isNewRecord) {
         if (isNewRecord) {
-            context.dataStore.edit { prefs ->
+            context.quizDataStore.edit { prefs ->
                 prefs[QuizPrefsKeys.BEST_SCORE]      = score
                 prefs[QuizPrefsKeys.BEST_TIME_MS]    = durationMs
                 prefs[QuizPrefsKeys.BEST_TIMESTAMP]  = completionTimeMs

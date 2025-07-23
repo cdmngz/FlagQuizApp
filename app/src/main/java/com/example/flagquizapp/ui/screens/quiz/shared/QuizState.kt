@@ -9,7 +9,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.example.flagquizapp.model.Country
 import com.example.flagquizapp.model.QuizRound
-import kotlinx.coroutines.delay
 
 @Stable
 class QuizState(
@@ -43,18 +42,16 @@ class QuizState(
     }
 
     /** advance to next round or mark finished */
-    suspend fun advance() {
-        delay(500)
+    fun advance() {
         if (round < totalRounds - 1) {
-            // move to next
             round++
             resetRound()
         } else {
-            // last round → bump past end so `finished == true`
             round = totalRounds
             onQuizFinished()
         }
     }
+
 
     private fun resetRound() {
         answered = false

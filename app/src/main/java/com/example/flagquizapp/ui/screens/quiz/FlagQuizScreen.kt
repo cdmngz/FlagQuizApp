@@ -1,5 +1,6 @@
 package com.example.flagquizapp.ui.screens.quiz
 
+import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -16,25 +17,60 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.flagquizapp.data.ModeKey
+import com.example.flagquizapp.data.ModeProgressStore
 import com.example.flagquizapp.model.Country
 import com.example.flagquizapp.ui.components.quiz.FlagQuizContent
 import com.example.flagquizapp.ui.screens.ScoreScreen
+import com.example.flagquizapp.ui.screens.quiz.shared.QuizState
 import com.example.flagquizapp.ui.screens.quiz.shared.rememberQuizState
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filter
+
+private suspend fun saveProgress(context: Context, key: ModeKey, state: QuizState) {
+    val percent = (state.score * 100f / state.totalRounds).toInt()
+    ModeProgressStore.save(context, key, percent)
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FlagQuizScreen(
     countries: List<Country>,
     navController: NavHostController,
-    title: String
+    title: String,
+    modeIndex: Int,
+    continentName: String,
+    subregionName: String?
 ) {
-    val quizState = rememberQuizState(countries = countries, onQuizFinished = {})
-    var startTimeMs by remember { mutableLongStateOf(System.currentTimeMillis()) }
+    val context = LocalContext.current
+    val progressKey = remember { ModeKey(continentName, subregionName, modeIndex) }
 
+    val quizState =
+        rememberQuizState(countries = countries, onQuizFinished = {}) // keep callback empty
+    var startTimeMs by rememberSaveable { mutableLongStateOf(System.currentTimeMillis()) }
+
+    LaunchedEffect(Unit) {
+        snapshotFlow { quizState.answered }
+            .filter { it && !quizState.finished }
+            .collectLatest {
+                delay(500)
+                quizState.advance()
+            }
+    }
+
+    LaunchedEffect(quizState.finished) {
+        if (quizState.finished) saveProgress(context, progressKey, quizState)
+    }
+
+    // Existing finished block
     if (quizState.finished) {
         val endTimeMs = System.currentTimeMillis()
         ScoreScreen(
@@ -49,10 +85,6 @@ fun FlagQuizScreen(
             onGoBack         = { navController.navigateUp() }
         )
         return
-    }
-
-    LaunchedEffect(quizState.answered) {
-        if (quizState.answered && !quizState.finished) quizState.advance()
     }
 
     Scaffold(

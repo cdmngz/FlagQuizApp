@@ -123,7 +123,10 @@ fun AppNavHost(
                 QuizType.FLAGS -> FlagQuizScreen(
                     countries = countries,
                     navController = navController,
-                    title = continent.displayName
+                    title = continent.displayName,
+                    modeIndex = quizTypeIndex,
+                    continentName = continent.name,
+                    subregionName = null
                 )
                 QuizType.MAPS  -> MapQuizScreen(countries, navController)
                 QuizType.MIXED -> MixedQuizScreen(countries, navController)
@@ -150,7 +153,10 @@ fun AppNavHost(
                 QuizType.FLAGS -> FlagQuizScreen(
                     countries = countries,
                     navController = navController,
-                    title = subregion.displayName
+                    title = subregion.displayName,
+                    modeIndex = quizTypeIndex,
+                    continentName = subregion.continent.name,
+                    subregionName = subregion.name
                 )
                 QuizType.MAPS  -> MapQuizScreen(countries, navController)
                 QuizType.MIXED -> MixedQuizScreen(countries, navController)
