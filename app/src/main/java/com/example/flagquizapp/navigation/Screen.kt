@@ -10,6 +10,9 @@ sealed class Screen(val route: String) {
     data object FlagQuiz : Screen("flag_quiz/{subregion}/{quizType}") {
         fun createRoute(subregion: String, quizType: Int) = "flag_quiz/$subregion/$quizType"
     }
+    data object FlagQuizAll : Screen("flag_quiz_all/{continent}/{quizType}") {
+        fun createRoute(continent: String, quizType: Int) = "flag_quiz_all/$continent/$quizType"
+    }
     data object Settings : Screen("settings")
     data object ThankYou : Screen("thank_you")
 }

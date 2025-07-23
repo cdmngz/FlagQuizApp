@@ -18,9 +18,9 @@ import com.example.flagquizapp.model.Subregion
 import com.example.flagquizapp.ui.screens.ContinentSelectionScreen
 import com.example.flagquizapp.ui.screens.DailyGameScreen
 import com.example.flagquizapp.ui.screens.HomeScreen
+import com.example.flagquizapp.ui.screens.SettingsScreen
 import com.example.flagquizapp.ui.screens.SubRegionScreen
 import com.example.flagquizapp.ui.screens.ThankYouScreen
-import com.example.flagquizapp.ui.screens.SettingsScreen
 import com.example.flagquizapp.ui.screens.quiz.FlagQuizScreen
 import com.example.flagquizapp.ui.screens.quiz.MapQuizScreen
 import com.example.flagquizapp.ui.screens.quiz.MixedQuizScreen
@@ -97,8 +97,38 @@ fun AppNavHost(
                 onGoBack = { navController.navigateUp() },
                 onSelectSubregion = { subregion, buttonIndex ->
                     navController.navigate(Screen.FlagQuiz.createRoute(subregion.name, buttonIndex))
+                },
+                onSelectAll = { buttonIndex ->
+                    navController.navigate(Screen.FlagQuizAll.createRoute(continent.name, buttonIndex))
                 }
             )
+        }
+
+        composable(
+            route = Screen.FlagQuizAll.route,
+            arguments = listOf(
+                navArgument("continent") { type = NavType.StringType },
+                navArgument("quizType") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val continentName = backStackEntry.arguments?.getString("continent") ?: return@composable
+            val quizTypeIndex = backStackEntry.arguments?.getInt("quizType") ?: 0
+
+            val continent = Continent.valueOf(continentName)
+            val countries = remember(continent) {
+                getWorldCountries().filter { it.continent == continent }
+            }
+
+            when (QuizType.from(quizTypeIndex)) {
+                QuizType.FLAGS -> FlagQuizScreen(
+                    countries = countries,
+                    navController = navController,
+                    title = continent.displayName
+                )
+                QuizType.MAPS  -> MapQuizScreen(countries, navController)
+                QuizType.MIXED -> MixedQuizScreen(countries, navController)
+                QuizType.TIMED -> TimedQuizScreen(countries, navController)
+            }
         }
 
         composable(
@@ -117,8 +147,12 @@ fun AppNavHost(
             }
 
             when (QuizType.from(quizTypeIndex)) {
-                QuizType.FLAGS -> FlagQuizScreen(countries, navController)
-                QuizType.MAPS -> MapQuizScreen(countries, navController)
+                QuizType.FLAGS -> FlagQuizScreen(
+                    countries = countries,
+                    navController = navController,
+                    title = subregion.displayName
+                )
+                QuizType.MAPS  -> MapQuizScreen(countries, navController)
                 QuizType.MIXED -> MixedQuizScreen(countries, navController)
                 QuizType.TIMED -> TimedQuizScreen(countries, navController)
             }

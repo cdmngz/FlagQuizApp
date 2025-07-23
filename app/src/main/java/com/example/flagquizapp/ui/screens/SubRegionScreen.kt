@@ -25,12 +25,20 @@ import androidx.compose.ui.unit.dp
 import com.example.flagquizapp.model.Continent
 import com.example.flagquizapp.model.Subregion
 
+private val buttonLabels = listOf(
+    "Flags",
+    "Maps",
+    "Flags / Maps",
+    "Test with time"
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubRegionScreen(
     continent: Continent,
     onGoBack: () -> Unit,
-    onSelectSubregion: (Subregion, Int) -> Unit // Add button index to identify which button was clicked
+    onSelectSubregion: (Subregion, Int) -> Unit,
+    onSelectAll: (Int) -> Unit
 ) {
     val subregions = remember(continent) {
         Subregion.entries.filter { it.continent == continent }
@@ -39,7 +47,7 @@ fun SubRegionScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("📍Subregions of ${continent.displayName}") },
+                title = { Text("🗺️ Subregions of ${continent.displayName}") },
                 navigationIcon = {
                     IconButton(onClick = onGoBack) {
                         Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Go back")
@@ -55,6 +63,14 @@ fun SubRegionScreen(
                 .padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            Text(
+                text = "All",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(start = 8.dp)
+            )
+            QuizOptionGrid { buttonIndex -> onSelectAll(buttonIndex) }
+            Spacer(Modifier.height(8.dp))
+
             subregions.forEach { subregion ->
                 Text(
                     text = subregion.displayName,
@@ -71,17 +87,39 @@ fun SubRegionScreen(
 }
 
 @Composable
+private fun QuizOptionGrid(onSelect: (Int) -> Unit) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        for (rowIndex in 0..1) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                for (colIndex in 0..1) {
+                    val buttonIndex = rowIndex * 2 + colIndex
+                    Button(
+                        onClick = { onSelect(buttonIndex) },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(48.dp)
+                    ) {
+                        Text(buttonLabels[buttonIndex])
+                    }
+                }
+            }
+        }
+        Spacer(Modifier.height(16.dp))
+    }
+}
+
+// Keep this one for subregions (unchanged)
+@Composable
 fun SubregionButtonGrid(
     subregion: Subregion,
     onSelect: (Subregion, Int) -> Unit
 ) {
-    val buttonLabels = listOf(
-        "Flags",
-        "Maps",
-        "Flags / Maps",
-        "Test with time"
-    )
-
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.fillMaxWidth()
