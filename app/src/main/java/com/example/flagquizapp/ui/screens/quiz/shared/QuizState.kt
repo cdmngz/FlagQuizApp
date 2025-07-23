@@ -17,11 +17,12 @@ class QuizState(
     val totalRounds: Int,
     val onQuizFinished: () -> Unit
 ) {
-    var round by mutableStateOf(0)
+    private var clickedCountry by mutableStateOf<Country?>(null)
+    private var isCorrect by mutableStateOf(false)
+
+    var round by mutableIntStateOf(0)
     var answered by mutableStateOf(false)
-    var isCorrect by mutableStateOf(false)
     var score by mutableIntStateOf(0)
-    var clickedCountry by mutableStateOf<Country?>(null)
 
     /** null once you’ve gone past the last round */
     val currentRound: QuizRound?
@@ -43,7 +44,7 @@ class QuizState(
 
     /** advance to next round or mark finished */
     suspend fun advance() {
-        delay(1000)
+        delay(500)
         if (round < totalRounds - 1) {
             // move to next
             round++
