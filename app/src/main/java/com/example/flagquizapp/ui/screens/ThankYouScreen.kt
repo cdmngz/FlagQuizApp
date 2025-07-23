@@ -65,37 +65,16 @@ fun ThankYouScreen(
                 SelectionContainer {
                     Column(horizontalAlignment = Alignment.Start) {
                         Column {
-                            Text(text = "🌟 BTC", fontWeight = FontWeight.SemiBold)
-                            Text(text = "btc", fontSize = 14.sp)
+                            Text(text = "Soon...", fontWeight = FontWeight.SemiBold)
                         }
 
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Column {
-                            Text(text = "💎 ETH", fontWeight = FontWeight.SemiBold)
-                            Text(text = "eth", fontSize = 14.sp)
-                        }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Column {
-                            Text(text = "🐶 DOGE", fontWeight = FontWeight.SemiBold)
-                            Text(text = "dg", fontSize = 14.sp)
-                        }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Column {
-                            Text(text = "🌊 SOL", fontWeight = FontWeight.SemiBold)
-                            Text(text = "sol", fontSize = 14.sp)
-                        }
                     }
                 }
 
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Text(
-                    text = "Every bit helps. You're awesome!",
+                    text = "Everything helps. You're awesome!",
                     fontSize = 16.sp
                 )
             }
