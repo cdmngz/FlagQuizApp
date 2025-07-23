@@ -60,8 +60,11 @@ fun AppNavHost(navController: NavHostController) {
 
             DailyGameScreen(
                 country = country,
+                onGoBack = { navController.navigateUp() },
                 onFinish = {
-                    navController.popBackStack()
+                    navController.navigate("home") {
+                        popUpTo("home") { inclusive = true }
+                    }
                 }
             )
         }
@@ -78,7 +81,7 @@ fun AppNavHost(navController: NavHostController) {
                         Screen.SubRegionSelection.createRoute(continent.name)
                     )
                 },
-                onGoBack = { navController.popBackStack() }
+                onGoBack = { navController.navigateUp() }
             )
         }
 
@@ -91,7 +94,7 @@ fun AppNavHost(navController: NavHostController) {
 
             SubRegionScreen(
                 continent = continent,
-                onGoBack = { navController.popBackStack() },
+                onGoBack = { navController.navigateUp() },
                 onSelectSubregion = { subregion, buttonIndex ->
                     // Navigate based on which button was clicked
                     // Example: route may vary depending on the index
