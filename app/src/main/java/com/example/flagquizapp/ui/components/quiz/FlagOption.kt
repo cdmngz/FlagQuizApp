@@ -39,11 +39,11 @@ fun FlagOption(
     Box(modifier = Modifier) {
         Box(
             modifier = Modifier
-                .size(100.dp)
+                .size(160.dp)
                 .clip(RoundedCornerShape(8.dp))
                 .border(
                     BorderStroke(
-                        width = if (!answered) 2.dp else 4.dp,
+                        width = 4.dp,
                         color = when {
                             !answered           -> Color.Transparent
                             country == correct  -> Color.Green
@@ -63,21 +63,23 @@ fun FlagOption(
                 contentDescription = country.name,
                 modifier = Modifier.matchParentSize()
             )
-        }
 
-        if (answered) {
-            Text(
-                text = country.name,
-                style = MaterialTheme.typography.labelSmall,
-                color = Color.White,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .background(
-                        Color.Black.copy(alpha = 0.6f),
-                        shape = RoundedCornerShape(bottomStart = 4.dp)
-                    )
-                    .padding(horizontal = 4.dp, vertical = 2.dp)
-            )
+            if (answered) {
+                Text(
+                    text = country.name,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.White,
+                    maxLines = 2,
+                    softWrap = true,
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .background(
+                            Color.Black.copy(alpha = 0.4f),
+                            shape = RoundedCornerShape(4.dp)
+                        )
+                        .padding(6.dp)
+                )
+            }
         }
     }
 }

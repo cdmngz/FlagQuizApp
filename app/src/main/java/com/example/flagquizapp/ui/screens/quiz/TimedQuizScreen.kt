@@ -59,7 +59,8 @@ fun TimedQuizScreen(
                     continent = current.correct.continent,
                     subregion = current.correct.subregion,
                     population = 0,
-                    capital = ""
+                    capital = "",
+                    code = ""
                 )
             quizState.onAnswerSelected(wrongCountry)
         }

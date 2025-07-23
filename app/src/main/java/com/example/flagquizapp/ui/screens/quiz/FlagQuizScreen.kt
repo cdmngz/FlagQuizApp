@@ -11,7 +11,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -34,7 +34,7 @@ fun FlagQuizScreen(
             // Do nothing here, handled below by quizState.finished
         }
     )
-    var startTimeMs by remember { mutableStateOf(System.currentTimeMillis()) }
+    var startTimeMs by remember { mutableLongStateOf(System.currentTimeMillis()) }
 
     if (quizState.finished) {
         val endTimeMs = System.currentTimeMillis()

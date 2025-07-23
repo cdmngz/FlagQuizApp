@@ -6,4 +6,5 @@ enum class Continent(val displayName: String) {
     ASIA("Asia"),
     EUROPE("Europe"),
     OCEANIA("Oceania"),
+    ANTARCTICA("Antarctic"),
 }
