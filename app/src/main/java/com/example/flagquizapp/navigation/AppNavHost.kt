@@ -16,70 +16,70 @@ import com.example.flagquizapp.model.Continent
 import com.example.flagquizapp.model.QuizType
 import com.example.flagquizapp.model.Subregion
 import com.example.flagquizapp.ui.screens.ContinentSelectionScreen
+import com.example.flagquizapp.ui.screens.DailyGameScreen
 import com.example.flagquizapp.ui.screens.HomeScreen
 import com.example.flagquizapp.ui.screens.SubRegionScreen
 import com.example.flagquizapp.ui.screens.ThankYouScreen
-import com.example.flagquizapp.ui.screens.daily.DailyGameScreen
+import com.example.flagquizapp.ui.screens.SettingsScreen
 import com.example.flagquizapp.ui.screens.quiz.FlagQuizScreen
 import com.example.flagquizapp.ui.screens.quiz.MapQuizScreen
 import com.example.flagquizapp.ui.screens.quiz.MixedQuizScreen
 import com.example.flagquizapp.ui.screens.quiz.TimedQuizScreen
+import com.example.flagquizapp.ui.theme.ThemeOption
 
 @Composable
-fun AppNavHost(navController: NavHostController) {
+fun AppNavHost(
+    navController: NavHostController,
+    currentTheme: ThemeOption,
+    onThemeChange: (ThemeOption) -> Unit
+) {
     NavHost(
-        navController  = navController,
+        navController = navController,
         startDestination = Screen.Home.route,
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // 1) Home → Continent picker
         composable(Screen.Home.route) {
             HomeScreen(
-                onPlayDailyGame = {
-                    navController.navigate(Screen.DailyGame.route)
-                },
-                onPlayWorldQuiz = {
-                    navController.navigate(Screen.ContinentSelection.route)
-                },
-                onPlayCapitalQuiz = {
-                    navController.navigate(Screen.ContinentSelection.route)
-                },
-                onPlayFootballQuiz = {
-                    navController.navigate(Screen.ContinentSelection.route)
-                },
-                onThankYou = {
-                    navController.navigate(Screen.ThankYou.route)
-                }
+                onPlayDailyGame = { navController.navigate(Screen.DailyGame.route) },
+                onPlayWorldQuiz = { navController.navigate(Screen.ContinentSelection.route) },
+                onPlayCapitalQuiz = { navController.navigate(Screen.ContinentSelection.route) },
+                onPlayFootballQuiz = { navController.navigate(Screen.ContinentSelection.route) },
+                onOpenSettings = { navController.navigate(Screen.Settings.route) }
             )
         }
 
         composable(Screen.DailyGame.route) {
             val country = remember { getWorldCountries().random() }
-
             DailyGameScreen(
                 country = country,
                 onGoBack = { navController.navigateUp() },
                 onFinish = {
-                    navController.navigate("home") {
-                        popUpTo("home") { inclusive = true }
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Home.route) { inclusive = true }
                     }
                 }
             )
         }
 
-        composable(Screen.ThankYou.route) {
-            ThankYouScreen()
+        composable(Screen.Settings.route) {
+            SettingsScreen(
+                onGoBack = { navController.navigateUp() },
+                onThankYou = { navController.navigate(Screen.ThankYou.route) },
+                currentTheme = currentTheme,
+                onThemeChange = onThemeChange
+            )
         }
 
+        composable(Screen.ThankYou.route) {
+            ThankYouScreen(onGoBack = { navController.navigateUp() })
+        }
 
         composable(Screen.ContinentSelection.route) {
             ContinentSelectionScreen(
                 onSelectContinent = { continent ->
-                    navController.navigate(
-                        Screen.SubRegionSelection.createRoute(continent.name)
-                    )
+                    navController.navigate(Screen.SubRegionSelection.createRoute(continent.name))
                 },
                 onGoBack = { navController.navigateUp() }
             )
@@ -96,8 +96,6 @@ fun AppNavHost(navController: NavHostController) {
                 continent = continent,
                 onGoBack = { navController.navigateUp() },
                 onSelectSubregion = { subregion, buttonIndex ->
-                    // Navigate based on which button was clicked
-                    // Example: route may vary depending on the index
                     navController.navigate(Screen.FlagQuiz.createRoute(subregion.name, buttonIndex))
                 }
             )
@@ -125,6 +123,5 @@ fun AppNavHost(navController: NavHostController) {
                 QuizType.TIMED -> TimedQuizScreen(countries, navController)
             }
         }
-
     }
 }

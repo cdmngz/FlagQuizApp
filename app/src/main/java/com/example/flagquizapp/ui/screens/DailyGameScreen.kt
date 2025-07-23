@@ -1,4 +1,4 @@
-package com.example.flagquizapp.ui.screens.daily
+package com.example.flagquizapp.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
