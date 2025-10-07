@@ -2,9 +2,7 @@ package com.example.flagquizapp.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
@@ -65,18 +63,11 @@ fun ThankYouScreen(
                 SelectionContainer {
                     Column(horizontalAlignment = Alignment.Start) {
                         Column {
-                            Text(text = "Soon...", fontWeight = FontWeight.SemiBold)
+                            Text(text = "Thanks!", fontWeight = FontWeight.SemiBold)
                         }
 
                     }
                 }
-
-                Spacer(modifier = Modifier.height(32.dp))
-
-                Text(
-                    text = "Everything helps. You're awesome!",
-                    fontSize = 16.sp
-                )
             }
         }
     }

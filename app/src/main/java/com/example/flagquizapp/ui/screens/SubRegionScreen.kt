@@ -76,21 +76,18 @@ fun SubRegionScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(contentPadding)
-                .padding(8.dp),
+                .padding(16.dp),
             spacing = 12.dp
         ) {
-            // ----- "All" block -----
             Text(
-                text = "All",
+                text = "All ${continent.displayName}",
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
-
-            val allProgresses = rememberModeProgresses(continent, null)
             QuizOptionGrid(
                 onSelect = onSelectAll,
-                progresses = allProgresses
+                progresses = rememberModeProgresses(continent, null)
             )
 
             Spacer(Modifier.height(8.dp))

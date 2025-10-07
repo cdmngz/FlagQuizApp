@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -56,130 +55,110 @@ fun ScoreScreen(
     onRestart: () -> Unit,
     onGoBack: () -> Unit
 ) {
-    val safeScore = score.coerceIn(0, total.coerceAtLeast(1))
-    val progress = safeScore / total.toFloat()
-    val animatedProgress by animateFloatAsState(targetValue = progress, label = "")
+    // avoid divide–by–zero
+    val safeTotal = total.coerceAtLeast(1)
+    val safeScore = score.coerceIn(0, safeTotal)
+    val progress = safeScore / safeTotal.toFloat()
+    val animatedProgress by animateFloatAsState(progress, label = "")
+
+    val durationSec = durationMs / 1000
 
     val context = LocalContext.current
-
-    // --- load stored record ---
-    val bestScoreFlow = context.quizDataStore.data.map { prefs ->
-        prefs[QuizPrefsKeys.BEST_SCORE] ?: 0
-    }
-    val bestTimeFlow = context.quizDataStore.data.map { prefs ->
-        prefs[QuizPrefsKeys.BEST_TIME_MS] ?: Long.MAX_VALUE
-    }
-    val bestTsFlow = context.quizDataStore.data.map { prefs ->
-        prefs[QuizPrefsKeys.BEST_TIMESTAMP] ?: 0L
-    }
+    val bestScoreFlow = context.quizDataStore.data.map { it[QuizPrefsKeys.BEST_SCORE] ?: 0 }
+    val bestTimeFlow =
+        context.quizDataStore.data.map { it[QuizPrefsKeys.BEST_TIME_MS] ?: Long.MAX_VALUE }
+    val bestTsFlow = context.quizDataStore.data.map { it[QuizPrefsKeys.BEST_TIMESTAMP] ?: 0L }
 
     val bestScore by bestScoreFlow.collectAsState(initial = 0)
     val bestTime by bestTimeFlow.collectAsState(initial = Long.MAX_VALUE)
-    val bestTs   by bestTsFlow.collectAsState(initial = 0L)
+    val bestTs by bestTsFlow.collectAsState(initial = 0L)
 
-    // --- decide if this run is a new record ---
-    val isNewRecord = remember(score, durationMs, bestScore, bestTime) {
-        score > bestScore || (score == bestScore && durationMs < bestTime)
+    val isNewRecord = remember(safeScore, durationMs, bestScore, bestTime) {
+        safeScore > bestScore || (safeScore == bestScore && durationMs < bestTime)
     }
 
-    // --- persist if new record ---
     LaunchedEffect(isNewRecord) {
         if (isNewRecord) {
-            context.quizDataStore.edit { prefs ->
-                prefs[QuizPrefsKeys.BEST_SCORE]      = score
-                prefs[QuizPrefsKeys.BEST_TIME_MS]    = durationMs
-                prefs[QuizPrefsKeys.BEST_TIMESTAMP]  = completionTimeMs
+            try {
+                context.quizDataStore.edit { prefs ->
+                    prefs[QuizPrefsKeys.BEST_SCORE] = safeScore
+                    prefs[QuizPrefsKeys.BEST_TIME_MS] = durationMs
+                    prefs[QuizPrefsKeys.BEST_TIMESTAMP] = completionTimeMs
+                }
+            } catch (t: Throwable) {
+                // swallow any DataStore errors
+                t.printStackTrace()
             }
         }
     }
 
-    // --- formatters ---
-    val dateFmt     = SimpleDateFormat("yyyy-MM-dd",   Locale.getDefault())
-    val durationSec = durationMs / 1000
+    val dateFmt = remember { SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()) }
 
     Box(
-        modifier = Modifier
+        Modifier
             .fillMaxSize()
             .padding(24.dp),
         contentAlignment = Alignment.Center
     ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.padding(32.dp)
+        ) {
+            // 1) Determinate ring
+            Box(contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(
+                    progress = { animatedProgress },
+                    modifier = Modifier.size(120.dp),
+                    strokeWidth = 8.dp,
+                    trackColor = ProgressIndicatorDefaults.circularIndeterminateTrackColor,
+                )
+                Text(
+                    text = "${(animatedProgress * 100).toInt()}%",
+                    fontSize = 24.sp
+                )
+            }
 
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(32.dp)
-            ) {
-                // 1) Progress ring
-                Box(contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(
-                        progress = { animatedProgress },
-                        modifier = Modifier.size(120.dp),
-                        strokeWidth = 8.dp,
-                        trackColor = ProgressIndicatorDefaults.circularIndeterminateTrackColor,
-                    )
+            // 2) Message
+            val msg = when {
+                safeScore == safeTotal -> "🏆 Perfect!"
+                safeScore >= safeTotal / 2 -> "🎉 Nice work!"
+                else -> "👍 Keep practicing!"
+            }
+            Text(msg, style = MaterialTheme.typography.headlineSmall)
+
+            // 3) Raw
+            Text("Score: $safeScore / $safeTotal")
+            Text("Time: ${durationSec}s")
+
+            // 4) Record info
+            if (bestScore > 0) {
+                if (isNewRecord) {
+                    Text("🎉 New record! $safeScore in ${durationSec}s")
+                } else {
+                    val bestSec = bestTime / 1000
                     Text(
-                        text = "${(animatedProgress * 100).toInt()}%",
-                        fontSize = 24.sp,
-                        style = MaterialTheme.typography.bodyLarge
+                        "🔖 Record: $bestScore in ${bestSec}s on ${dateFmt.format(Date(bestTs))}"
                     )
-                }
-
-                Spacer(Modifier.height(24.dp))
-
-                // 2) Message
-                val message = when {
-                    safeScore == total -> "🏆 Perfect!"
-                    safeScore >= total / 2 -> "🎉 Nice work!"
-                    else -> "👍 Keep practicing!"
-                }
-                Text(message, style = MaterialTheme.typography.headlineSmall)
-
-                Spacer(Modifier.height(8.dp))
-
-                // 3) Raw score
-                Text("Score: $safeScore / $total", style = MaterialTheme.typography.bodyLarge)
-
-                Spacer(Modifier.height(16.dp))
-
-                // 4) Timestamp & duration
-                Text("Your time: ${durationSec}s",
-                    style = MaterialTheme.typography.bodyMedium)
-
-                Spacer(Modifier.height(16.dp))
-
-                // 5) Record display
-                if (bestScore > 0) {
-                    if (isNewRecord) {
-                        Text(
-                            "🎉 New record! $score correct in ${durationSec}s",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    } else {
-                        val bestSec = bestTime / 1000
-                        Text(
-                            "🔖 Record: $bestScore correct in ${bestSec}s on ${dateFmt.format(Date(bestTs))}",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                }
-
-                Spacer(Modifier.height(24.dp))
-
-                // 6) Action buttons
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Button(onClick = onRestart, modifier = Modifier.weight(1f)) {
-                        Icon(Icons.Default.Refresh, contentDescription = null)
-                        Spacer(Modifier.width(8.dp))
-                        Text("Again")
-                    }
-                    OutlinedButton(onClick = onGoBack, modifier = Modifier.weight(1f)) {
-                        Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Go back")
-                        Spacer(Modifier.width(8.dp))
-                        Text("Back")
-                    }
                 }
             }
+
+            // 5) Actions
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Button(onClick = onRestart, modifier = Modifier.weight(1f)) {
+                    Icon(Icons.Default.Refresh, null)
+                    Spacer(Modifier.width(8.dp))
+                    Text("Again")
+                }
+                OutlinedButton(onClick = onGoBack, modifier = Modifier.weight(1f)) {
+                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, null)
+                    Spacer(Modifier.width(8.dp))
+                    Text("Back")
+                }
+            }
+        }
     }
 }

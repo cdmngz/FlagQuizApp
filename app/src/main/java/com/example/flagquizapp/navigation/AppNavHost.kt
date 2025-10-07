@@ -128,7 +128,11 @@ fun AppNavHost(
                     continentName = continent.name,
                     subregionName = null
                 )
-                QuizType.MAPS  -> MapQuizScreen(countries, navController)
+                QuizType.MAPS -> MapQuizScreen(
+                    countries = countries,
+                    navController = navController,
+                    title = continent.displayName
+                )
                 QuizType.MIXED -> MixedQuizScreen(countries, navController)
                 QuizType.TIMED -> TimedQuizScreen(countries, navController)
             }
@@ -158,7 +162,11 @@ fun AppNavHost(
                     continentName = subregion.continent.name,
                     subregionName = subregion.name
                 )
-                QuizType.MAPS  -> MapQuizScreen(countries, navController)
+                QuizType.MAPS -> MapQuizScreen(
+                    countries = countries,
+                    navController = navController,
+                    title = subregion.displayName
+                )
                 QuizType.MIXED -> MixedQuizScreen(countries, navController)
                 QuizType.TIMED -> TimedQuizScreen(countries, navController)
             }

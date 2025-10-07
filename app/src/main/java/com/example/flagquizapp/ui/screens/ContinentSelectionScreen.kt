@@ -61,7 +61,7 @@ fun ContinentSelectionScreen(
                 navigationIcon = {
                     IconButton(onClick = onGoBack) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                            Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                             contentDescription = "Go back"
                         )
                     }

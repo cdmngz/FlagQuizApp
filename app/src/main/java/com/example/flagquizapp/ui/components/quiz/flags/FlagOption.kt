@@ -1,4 +1,4 @@
-package com.example.flagquizapp.ui.components.quiz
+package com.example.flagquizapp.ui.components.quiz.flags
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -31,6 +31,7 @@ fun FlagOption(
     country: Country,
     correct: Country,
     answered: Boolean,
+    isSelected: Boolean,
     onClick: () -> Unit,
     aspectRatio: Float = 3f / 2f
 ) {
@@ -42,16 +43,20 @@ fun FlagOption(
     val borderColor = when {
         !answered          -> Color.Transparent
         country == correct -> Color.Green
-        else               -> Color.Red
+        else -> Color.Red
     }
+
+    // Soft “letterbox” background
+    val letterboxColor = MaterialTheme.colorScheme.surfaceVariant
 
     Box(
         modifier = Modifier
             .width(170.dp)
             .aspectRatio(aspectRatio)
             .clip(RoundedCornerShape(8.dp))
+            .background(letterboxColor)
             .border(BorderStroke(4.dp, borderColor), RoundedCornerShape(8.dp))
-            .clickable(enabled = !answered, onClick = onClick)
+            .clickable(enabled = !answered) { onClick() }
     ) {
         AsyncImage(
             model = ImageRequest.Builder(context)
@@ -60,8 +65,11 @@ fun FlagOption(
                 .build(),
             imageLoader = imageLoader,
             contentDescription = country.name,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
+            modifier = Modifier
+                .fillMaxSize()
+                .align(Alignment.Center),
+            contentScale = ContentScale.Fit,
+            alignment = Alignment.Center
         )
 
         if (answered) {
@@ -71,7 +79,10 @@ fun FlagOption(
                 color = Color.White,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
-                    .background(Color.Black.copy(alpha = 0.6f), RoundedCornerShape(4.dp))
+                    .background(
+                        Color.Black.copy(alpha = 0.6f),
+                        RoundedCornerShape(4.dp)
+                    )
                     .padding(6.dp)
             )
         }
