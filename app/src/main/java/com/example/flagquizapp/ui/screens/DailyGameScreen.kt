@@ -69,14 +69,20 @@ fun DailyGameScreen(
     var populationMessage by rememberSaveable { mutableStateOf<String?>(null) }
 
     val available by remember(countryNames, usedGuesses) {
-        derivedStateOf { countryNames.filterNot { it in usedGuesses } }
+        derivedStateOf { countryNames.filterNot { option -> option in usedGuesses } }
     }
 
     fun submitNameGuess(raw: String) {
         val guess = raw.trim().takeIf { it.isNotEmpty() } ?: return
-        usedGuesses = usedGuesses + guess
+        val canonicalGuess = countryNames.firstOrNull { it.equals(guess, ignoreCase = true) } ?: return
+        if (canonicalGuess in usedGuesses) {
+            textInput = ""
+            return
+        }
 
-        if (guess.equals(country.name, ignoreCase = true)) {
+        usedGuesses = usedGuesses + canonicalGuess
+
+        if (canonicalGuess.equals(country.name, ignoreCase = true)) {
             score = maxGuesses - revealedBoxes.size
             revealedBoxes = (0 until maxGuesses).toList()
             flagRevealed = true
@@ -185,9 +191,13 @@ fun DailyGameScreen(
                     onOptionChosen = { submitNameGuess(it) },
                     modifier = Modifier.fillMaxWidth()
                 )
+                val trimmed = textInput.trim()
+                val canSubmit = trimmed.isNotEmpty() && countryNames.any {
+                    it.equals(trimmed, ignoreCase = true) && it !in usedGuesses
+                }
                 Button(
                     onClick = { submitNameGuess(textInput) },
-                    enabled = available.any { it.equals(textInput.trim(), ignoreCase = true) }
+                    enabled = canSubmit
                 ) { Text("Submit") }
 
                 if (usedGuesses.isNotEmpty()) {
